@@ -1,0 +1,27 @@
+---
+# https://dart.dev/get-dart#install
+
+- name: Install a list of packages
+  ansible.builtin.apt:
+    pkg:
+    - apt-transport-https
+  become: true
+
+- name: Download and add the Google Linux GPG public key.
+  ansible.builtin.shell: wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg  --dearmor -o /usr/share/keyrings/dart.gpg
+  args:
+    creates: /usr/share/keyrings/dart.gpg
+  become: true
+
+- name: Add the Dart package repository to your Linux system.
+  ansible.builtin.shell: echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | tee /etc/apt/sources.list.d/dart_stable.list
+  args:
+    creates: /etc/apt/sources.list.d/dart_stable.list
+  become: true
+
+- name: Use the following sudo apt-get commands.
+  ansible.builtin.apt:
+    pkg:
+    - dart
+    update_cache: true
+  become: true
